@@ -161,9 +161,9 @@ int main(int argc, char *argv[])
 	    
 		// Update database
 		if (commit) {
-			cout << "Committing results to database...";		
+			cout << "Committing results to database..." << endl;
 			db.syncNewRatings(c, commit);		
-			cout << "syncNewRatings() complete...";
+			cout << "syncNewRatings() complete..." << endl;
 		}
 		else {
 			db.syncNewRatings(c, false);		

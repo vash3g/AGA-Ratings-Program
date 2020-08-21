@@ -150,7 +150,7 @@ Returns true if the operation was successful
 
 *****************************************************************/
 bool databaseConnection::getTournamentUpdateList(vector<string> &tournamentUpdateList, boost::gregorian::date &tournamentCascadeDate) {
-	mysqlpp::Query query = db.query("SELECT MIN(Game_Date) AS date FROM games WHERE Game_Date > '1900-01-01' AND NOT (Online OR Exclude OR Rated)");
+	mysqlpp::Query query = db.query("SELECT MIN(Game_Date) AS date FROM games WHERE Game_Date > '1950-01-01' AND NOT (Online OR Exclude OR Rated)");
 
 	if (showtournamentlist) {
 		cout << "getTournamentUpdateList: AGAGD: " << query.str() << endl;
@@ -170,7 +170,7 @@ bool databaseConnection::getTournamentUpdateList(vector<string> &tournamentUpdat
 	}
 	tournamentCascadeDate = boost::gregorian::date(boost::gregorian::from_simple_string(tempDate.str()));
 
-	mysqlpp::Query query2 = db.query("SELECT DISTINCT t.Tournament_Code FROM tournaments t, games g WHERE t.Tournament_Date >= %0q AND t.Tournament_Code = g.Tournament_Code AND NOT (g.Online OR g.Exclude) ORDER BY Tournament_Date");
+	mysqlpp::Query query2 = db.query("SELECT DISTINCT t.Tournament_Code, t.Tournament_Date FROM tournaments t, games g WHERE t.Tournament_Date >= %0q AND t.Tournament_Code = g.Tournament_Code AND NOT (g.Online OR g.Exclude) ORDER BY Tournament_Date");
 
 	if (showtournamentlist) {
 		cout << "getTournamentUpdateList: AGAGD: " << query2.str(tempDate) << endl;
@@ -572,6 +572,7 @@ void databaseConnection::syncNewRatings (collection &c, bool commit) {
 	mysqlpp::Transaction trans_members(membersdb);
 
 	for (playerIt = c.playerHash.begin(); playerIt != c.playerHash.end(); playerIt++) {
+        cout << "Updating records for ID: " << playerIt->second.id << endl;
 		if ( updateAGAGD(c, playerIt, commit) == false ) {			// commit or &commit ?
 			trans_agagd.rollback();
 			exit(1);
