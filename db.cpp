@@ -595,14 +595,28 @@ void databaseConnection::syncNewRatings (collection &c, bool commit) {
 	// Finish updating AGAGD
 	mysqlpp::Query query2 = db.query("UPDATE games SET elab_date = %0q, Rated = 1 WHERE tournament_code=%1q AND Online=0");
 	query2.parse();
+
+	// Update the elab_dates for tournaments
+	mysqlpp::Query tournaments_query = db.query("UPDATE tournaments SET elab_date = %0q, Status = 1 WHERE tournament_code=%1q");
+	tournaments_query.parse();
+
 	if (showagagd) {
-		cout << "syncNewRatings: AGAGD: " << query2.str(to_iso_extended_string(c.tournamentDate), c.tournamentCode) << ";" << endl;
+		cout << "syncNewRatings: AGAGD Games: " << query2.str(to_iso_extended_string(c.tournamentDate), c.tournamentCode) << ";" << endl;
+		cout << "syncNewRatings: AGAGD Tournaments: " << tournaments_query.str(to_iso_extended_string(c.tournamentDate), c.tournamentCode) << ";" << endl;
 	}
 	if (commit) {
 		query2.execute(to_iso_extended_string(c.tournamentDate), c.tournamentCode);
 		if (query2.errnum() != 0) {
 			cerr << "Query failure in db.cpp.  Rolling back transaction and exiting program due to: " 
 				<< query2.error() << endl;
+			trans_agagd.rollback();
+			exit(1);
+		}
+
+		tournaments_query.execute(to_iso_extended_string(c.tournamentDate), c.tournamentCode);
+	    if (tournaments_query.errnum() != 0) {
+			cerr << "Query failure in db.cpp.  Rolling back transaction and exiting program due to: " 
+				<< tournaments_query.error() << endl;
 			trans_agagd.rollback();
 			exit(1);	
 		}
