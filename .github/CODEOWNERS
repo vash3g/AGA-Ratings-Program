@@ -1,0 +1,5 @@
+# CODEOWNERS File for the AGA Ratings Program
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
+
+# Global Settings for the Owners
+* @usgo/usgoowners
