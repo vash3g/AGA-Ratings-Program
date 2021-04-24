@@ -10,7 +10,7 @@ LIBS=-lm -lgsl -lgslcblas -lmysqlpp -lboost_date_time
 INC=-I/usr/include/mysql
 FLAGS=-g -Wall
 
-all: bayrate check basicrate #copyMembership syncDBs
+all: bayrate check #basicrate copyMembership syncDBs
 	#executables removed 4/2021 Github Issue #9. Legacy applications.
 
 bayrate: bayrate.cpp db.o collection.o game.o player.o
@@ -19,8 +19,8 @@ bayrate: bayrate.cpp db.o collection.o game.o player.o
 check: check.cpp db.o collection.o game.o player.o
 	g++ $(FLAGS) db.o collection.o game.o check.cpp player.o $(INC) $(LIBS) -o check
 
-basicrate: GSLSimplex.cpp db.o collection.o test-game.o player.o
-	g++ $(FLAGS) db.o collection.o game.o GSLSimplex.cpp player.o $(INC) $(LIBS) -o basicrate
+#basicrate: GSLSimplex.cpp db.o collection.o test-game.o player.o
+#	g++ $(FLAGS) db.o collection.o game.o GSLSimplex.cpp player.o $(INC) $(LIBS) -o basicrate
 
 #copyMembership: memUpdate.cpp db.o
 #	g++ ${FLAGS} -o copyMembership memUpdate.cpp $(INC) $(LIBS)
